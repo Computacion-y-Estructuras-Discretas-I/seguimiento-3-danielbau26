@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.HashSet;
 import java.util.Scanner;
 import structures.PilaGenerica;
 import structures.TablasHash;
@@ -64,8 +65,26 @@ public class Main {
      * @return true si esta balanceada, false si no
      */
     public boolean verificarBalanceo(String s) {
-        // TODO: completar 
-        return false;
+        PilaGenerica<Character> pila = new PilaGenerica<>(s.length());
+        char[] letras = s.toCharArray();
+
+        if(letras.length == 0){
+            return true;
+        }
+
+        for(int i=0; i<s.length(); i++){
+            char c = letras[i];
+            if(c == '(' || c == '[' || c == '{' ){
+                pila.Push(c);
+            }else if(c == '}' || c == ']' || c == ')' ){
+                char cabeza = pila.Pop();
+                if(c== ')' && cabeza != '(' || c== ']' && cabeza != '[' || c== '}' && cabeza != '{'){
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
 
     /**
@@ -73,8 +92,51 @@ public class Main {
      * @param numeros arreglo de numeros enteros
      * @param objetivo suma objetivo
      */
-    public void encontrarParesConSuma(int[] numeros, int objetivo) {
-        // TODO: completar
+    public void encontrarParesConSuma(int[] numeros, int objetivo) throws Exception {
+        int size = numeros.length;
+        TablasHash th = new TablasHash(size);
+
+        for(int i=0; i<size; i++){
+            int n = numeros[i];
+            try {
+                th.insert(n, n);
+            } catch (Exception e) {
+
+            }
+            
+        }
+
+        HashSet<String> paresUnicos = new HashSet<>();
+
+        for(int i=0; i<size; i++){
+            String par = "";
+            int n = numeros[i];
+
+            int numeroFaltante = objetivo - n;
+            boolean sr = false;
+            try {
+                sr = th.search(numeroFaltante, numeroFaltante);
+            } catch (Exception e) {
+            }
+
+            if(sr && numeroFaltante!=n){
+                if(n>numeroFaltante){
+                    par = "(" + numeroFaltante + ", " + n + ")";
+                }else{
+                    par = "(" + n + ", " + numeroFaltante + ")";
+                }
+
+                paresUnicos.add(par);
+            }
+        }
+
+        if(paresUnicos.size() == 0){
+            System.out.println("Ningún par encontrado");
+        }else{
+            System.out.println(paresUnicos);
+        }
+
+
     }
 
     public static void main(String[] args) throws Exception {
